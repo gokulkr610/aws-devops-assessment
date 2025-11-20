@@ -6,7 +6,7 @@ pipeline {
             steps {
                 git url: 'https://github.com/gokulkr610/aws-devops-assessment.git',
                     branch: 'main',
-                    credentialsId: 'github-token'
+                    credentialsId: 'github-creds'
             }
         }
 
@@ -39,3 +39,4 @@ pipeline {
         }
     }
 }
+
