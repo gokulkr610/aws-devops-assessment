@@ -1,19 +1,26 @@
 pipeline {
     agent any
 
+    environment {
+        DOCKERHUB_CREDENTIALS = 'dockerhub-creds'
+        GITHUB_CREDENTIALS = 'github-creds'
+        IMAGE_NAME = "gokulkr610/aws-devops-assessment"
+    }
+
     stages {
+
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/gokulkr610/aws-devops-assessment.git',
-                    branch: 'main',
-                    credentialsId: 'github-creds'
+                git branch: 'main',
+                    url: 'https://github.com/gokulkr610/aws-devops-assessment.git',
+                    credentialsId: "${GITHUB_CREDENTIALS}"
             }
         }
 
         stage('Build Image') {
             steps {
                 script {
-                    dockerImage = docker.build("gokulkr610/aws-devops-assessment")
+                    dockerImage = docker.build("${IMAGE_NAME}")
                 }
             }
         }
@@ -21,8 +28,8 @@ pipeline {
         stage('Login to DockerHub') {
             steps {
                 script {
-                    docker.withRegistry('', 'dockerhub-creds') {
-                        echo "Logged in"
+                    docker.withRegistry('', "${DOCKERHUB_CREDENTIALS}") {
+                        echo "DockerHub login successful"
                     }
                 }
             }
@@ -31,7 +38,7 @@ pipeline {
         stage('Push Image') {
             steps {
                 script {
-                    docker.withRegistry('', 'dockerhub-creds') {
+                    docker.withRegistry('', "${DOCKERHUB_CREDENTIALS}") {
                         dockerImage.push()
                     }
                 }
@@ -39,4 +46,3 @@ pipeline {
         }
     }
 }
-
