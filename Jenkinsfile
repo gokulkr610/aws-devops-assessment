@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKERHUB_CREDENTIALS = 'dockerhub-creds'
         GITHUB_CREDENTIALS = 'github-creds'
-        IMAGE_NAME = "gokulkr610/aws-devops-assessment "
+        IMAGE_NAME = "gokulkr610/aws-devops-assessment"
     }
 
     stages {
@@ -46,4 +46,5 @@ pipeline {
         }
     }
 }
+
 
