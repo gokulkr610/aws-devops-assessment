@@ -1,24 +1,19 @@
 pipeline {
     agent any
-    
-    environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')
-        DOCKER_IMAGE = "gokulkr610/hello-minikube"
-    }
 
     stages {
-        
-        stage('Clone Repo') {
+        stage('Checkout') {
             steps {
-                git branch: 'main',
-                url: 'https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME.git'
+                git url: 'https://github.com/gokulkr610/aws-devops-assessment.git',
+                    branch: 'main',
+                    credentialsId: 'github-token'
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Build Image') {
             steps {
                 script {
-                    sh 'docker build -t $DOCKER_IMAGE .'
+                    dockerImage = docker.build("gokulkr610/aws-devops-assessment")
                 }
             }
         }
@@ -26,7 +21,9 @@ pipeline {
         stage('Login to DockerHub') {
             steps {
                 script {
-                    sh "echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin"
+                    docker.withRegistry('', 'dockerhub-creds') {
+                        echo "Logged in"
+                    }
                 }
             }
         }
@@ -34,7 +31,9 @@ pipeline {
         stage('Push Image') {
             steps {
                 script {
-                    sh 'docker push $DOCKER_IMAGE'
+                    docker.withRegistry('', 'dockerhub-creds') {
+                        dockerImage.push()
+                    }
                 }
             }
         }
